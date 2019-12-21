@@ -33,7 +33,8 @@ router.delete('/:id', async (req, res) => {
 async function loadTripsCollection() {
     const client = await mongo.MongoClient.connect
     ('mongodb+srv://abc123:adminAbc123@sklep-luflk.mongodb.net/test?retryWrites=true&w=majority',  {
-        useNewUrlParser: true
+        useNewUrlParser: true,
+        useUnifiedTopology: true
     });
 
     return client.db('Sklep').collection('trips');
