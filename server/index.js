@@ -8,9 +8,10 @@ const App = express();
 App.use(bodyParser.json());
 App.use(cors());
 
-
+const posts = require('./routes/api/posts')
 const trips = require('./routes/api/trips');
 App.use('/api/trips', trips);
+App.use('/api/posts', posts);
 
 const port = process.env.PORT || 5000;
 
