@@ -33,8 +33,7 @@ posts.post('/', upload.single('postImage'), (req, res) => {
         title: req.body.title,
         text: req.body.text,
         date: Date.now(),
-        postPhoto: req.file.path
-        // todo: make it work without postPhoto
+        postPhoto: req.file ? req.file.path : null
     });
 
     post.save().then(result => {
