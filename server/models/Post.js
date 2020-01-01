@@ -15,7 +15,6 @@ const PostSchema = mongoose.Schema({
     },
     postPhoto: {
         type: String,
-        required: false
     }
 });
 

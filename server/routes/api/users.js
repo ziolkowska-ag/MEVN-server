@@ -9,7 +9,7 @@ users.use(cors());
 
 process.env.SECRET_KEY = 'secret';
 
-users.post("/register", (req, res) => {
+users.post('/register', (req, res) => {
     const userData = {
         email: req.body.email,
         password: req.body.password
@@ -52,7 +52,7 @@ users.post('/login', (req, res) => {
                 });
                 res.send(token);
             } else {
-                res.json({error: 'User does not exist'});
+                res.json({error: 'Incorrect password'});
             }
         } else {
             res.json({error: 'User does not exist'});

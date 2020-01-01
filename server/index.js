@@ -11,7 +11,7 @@ App.use(bodyParser.json());
 App.use(bodyParser.urlencoded({extended: false}));
 App.use(cors());
 
-const mongoURL = 'mongodb+srv://abc123:adminAbc123@sklep-luflk.mongodb.net/test?retryWrites=true&w=majority';
+const mongoURL = 'mongodb+srv://abc123:adminAbc123@sklep-luflk.mongodb.net/Sklep?retryWrites=true&w=majority';
 
 mongoose.connect(mongoURL, {useNewUrlParser: true})
     .then(() => console.log("MongoDB connected"))
