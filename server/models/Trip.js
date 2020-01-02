@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 
-const TripSchema =  mongoose.Schema({
-    _id: mongoose.Types.ObjectId,
+const TripSchema = mongoose.Schema({
     name: {
         type: String,
         required: true
