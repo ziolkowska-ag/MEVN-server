@@ -11,6 +11,7 @@ process.env.SECRET_KEY = 'secret';
 
 users.post('/register', (req, res) => {
     const userData = {
+        username: req.body.username,
         email: req.body.email,
         password: req.body.password
     };
@@ -22,7 +23,7 @@ users.post('/register', (req, res) => {
                 userData.password = hash;
                 User.create(userData)
                     .then(user => {
-                        res.json({status: user.email + ' registered'})
+                        res.json({status: user.username + ' registered'})
                     })
                     .catch(err => {
                         res.send('error: ' + err);
@@ -39,15 +40,15 @@ users.post('/register', (req, res) => {
 
 users.post('/login', (req, res) => {
     User.findOne({
-        email: req.body.email
+        username: req.body.username,
     }).then(user => {
         if (user) {
             if (bcrypt.compareSync(req.body.password, user.password)) {
                 const payload = {
                     _id: user._id,
-                    email: user.email
+                    username: user.username
                 };
-                let token = jwt.sign(payload, process.env.SECRET_KEY, {
+                let token = jwt.sign(payload, 'secrectKey', {
                     expiresIn: 1440
                 });
                 res.send(token);
@@ -55,6 +56,7 @@ users.post('/login', (req, res) => {
                 res.json({error: 'Incorrect password'});
             }
         } else {
+            res.status(401);
             res.json({error: 'User does not exist'});
         }
     }).catch(err => {

@@ -1,6 +1,8 @@
 const express = require('express');
 const posts = express.Router();
 const multer = require('multer');
+const mongoose = require("mongoose");
+
 const Post = require('../../models/Post');
 
 const storage = multer.diskStorage({
@@ -30,6 +32,7 @@ const upload = multer({
 
 posts.post('/', upload.single('postImage'), (req, res) => {
     const post = new Post({
+        _id: new mongoose.Types.ObjectId(),
         title: req.body.title,
         text: req.body.text,
         date: Date.now(),
