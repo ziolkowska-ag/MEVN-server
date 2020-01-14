@@ -48,11 +48,12 @@ users.post('/login', (req, res) => {
                     _id: user._id,
                     username: user.username
                 };
-                let token = jwt.sign(payload, 'secrectKey', {
+                let token = jwt.sign(payload, 'secretKey', {
                     expiresIn: 1440
                 });
                 res.send(token);
             } else {
+                res.status(401);
                 res.json({error: 'Incorrect password'});
             }
         } else {
