@@ -1,19 +1,49 @@
 const express = require('express');
-const mongo = require('mongodb');
 const mongoose = require("mongoose");
+const multer = require('multer');
 
 const trips = express.Router();
 const Trip = require('../../models/Trip');
 
-//  GET trips
-trips.get('/', async (req, res) => {
-    const trips = await loadTripsCollection();
-    res.send(await trips.find({}).toArray());
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'server/uploads/trips');
+    },
+    filename: function (req, file, cb) {
+        cb(null, new Date().toISOString().replace(":", "_").replace(":", "_") + file.originalname);
+    }
+});
+
+const fileFilter = (req, file, cb) => {
+    if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
+        cb(null, true);
+    } else {
+        cb(null, false);
+    }
+};
+
+const upload = multer({
+    storage: storage,
+    limits: {
+        fieldSize: 1024 * 1024 * 5
+    },
+    fileFilter: fileFilter
+});
+
+trips.get('/', (req, res) => {
+    Trip.find().exec().then(docs => {
+        res.status(200).json(docs)
+    }).catch(err => {
+        res.status(500).json({
+            error: err
+        })
+    });
 });
 
 
 trips.get('/:tripId', (req, res) => {
     const id = req.params.tripId;
+
     Trip.findById(id).exec().then(doc => {
         if (doc) {
             res.status(200).json(doc);
@@ -30,35 +60,35 @@ trips.get('/:tripId', (req, res) => {
 });
 
 
-// Add trip
-trips.post('/', async (req, res) => {
-    const trips = await loadTripsCollection();
-    await trips.insertOne({
+trips.post('/', upload.single('postImage'), (req, res) => {
+    const trip = new Trip({
         _id: new mongoose.Types.ObjectId(),
         name: req.body.name,
         country: req.body.country,
         price: req.body.price,
-        date: new Date()
-    });
-    res.status(201).send();
-});
-
-// Delete trip
-trips.delete('/:id', async (req, res) => {
-    const trips = await loadTripsCollection();
-    await trips.deleteOne({_id: new mongo.ObjectID(req.params.id)});
-    res.status(200).send();
-});
-
-
-async function loadTripsCollection() {
-    const client = await mongo.MongoClient.connect
-    ('mongodb+srv://abc123:adminAbc123@sklep-luflk.mongodb.net/test?retryWrites=true&w=majority',  {
-        useNewUrlParser: true,
-        useUnifiedTopology: true
+        date: Date.now(),
+        postPhoto: req.file ? req.file.path : null
     });
 
-    return client.db('Sklep').collection('trips');
-}
+    trip.save().then(result => {
+        console.log(result);
+    }).catch(err => console.log(err));
+
+    res.status(200).json({
+        message: "New trip added!",
+        createdTrip: trip
+    });
+});
+
+trips.delete('/:tripId', (req, res) => {
+    const id = req.params.tripId;
+    Trip.deleteOne({_id: id}).exec().then(result => {
+        res.status(200).json(result);
+    }).catch(err => {
+        res.status(500).json({
+            error: err
+        });
+    });
+});
 
 module.exports = trips;

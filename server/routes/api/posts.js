@@ -7,7 +7,7 @@ const Post = require('../../models/Post');
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, 'server/uploads');
+        cb(null, 'server/uploads/posts');
     },
     filename: function (req, file, cb) {
         cb(null, new Date().toISOString().replace(":", "_").replace(":", "_") + file.originalname);
@@ -28,25 +28,6 @@ const upload = multer({
         fieldSize: 1024 * 1024 * 5
     },
     fileFilter: fileFilter
-});
-
-posts.post('/', upload.single('postImage'), (req, res) => {
-    const post = new Post({
-        _id: new mongoose.Types.ObjectId(),
-        title: req.body.title,
-        text: req.body.text,
-        date: Date.now(),
-        postPhoto: req.file ? req.file.path : null
-    });
-
-    post.save().then(result => {
-        console.log(result);
-    }).catch(err => console.log(err));
-
-    res.status(200).json({
-        message: "New post added!",
-        createdPost: post
-    });
 });
 
 posts.get('/', (req, res) => {
@@ -74,6 +55,25 @@ posts.get('/:postId', (req, res) => {
         res.status(500).json({
             error: err
         });
+    });
+});
+
+posts.post('/', upload.single('postImage'), (req, res) => {
+    const post = new Post({
+        _id: new mongoose.Types.ObjectId(),
+        title: req.body.title,
+        text: req.body.text,
+        date: Date.now(),
+        postPhoto: req.file ? req.file.path : null
+    });
+
+    post.save().then(result => {
+        console.log(result);
+    }).catch(err => console.log(err));
+
+    res.status(200).json({
+        message: "New post added!",
+        createdPost: post
     });
 });
 
