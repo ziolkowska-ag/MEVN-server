@@ -1,38 +1,19 @@
 const express = require('express');
 const mongoose = require("mongoose");
-const multer = require('multer');
 
 const trips = express.Router();
 const Trip = require('../../models/Trip');
 
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, 'server/uploads/trips');
-    },
-    filename: function (req, file, cb) {
-        cb(null, new Date().toISOString().replace(":", "_").replace(":", "_") + file.originalname);
-    }
-});
-
-const fileFilter = (req, file, cb) => {
-    if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
-        cb(null, true);
-    } else {
-        cb(null, false);
-    }
-};
-
-const upload = multer({
-    storage: storage,
-    limits: {
-        fieldSize: 1024 * 1024 * 5
-    },
-    fileFilter: fileFilter
-});
-
-trips.get('/', (req, res) => {
+trips.get('/:userId', (req, res) => {
+    const userId = req.params.userId;
     Trip.find().exec().then(docs => {
-        res.status(200).json(docs)
+        const usersTrips = [];
+        docs.forEach(function(t) {
+            if(t.created_by == userId) {
+                usersTrips.push(t);
+            }
+        });
+        res.status(200).json(usersTrips)
     }).catch(err => {
         res.status(500).json({
             error: err
@@ -60,14 +41,14 @@ trips.get('/:tripId', (req, res) => {
 });
 
 
-trips.post('/', upload.single('postImage'), (req, res) => {
+trips.post('/', (req, res) => {
     const trip = new Trip({
         _id: new mongoose.Types.ObjectId(),
+        created_by: req.body.created_by,
         name: req.body.name,
         country: req.body.country,
         price: req.body.price,
         date: Date.now(),
-        postPhoto: req.file ? req.file.path : null
     });
 
     trip.save().then(result => {

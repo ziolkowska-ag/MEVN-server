@@ -35,9 +35,9 @@ posts.get('/:userId', (req, res) => {
 
     Post.find().exec().then(docs => {
         const usersPosts = [];
-        docs.forEach(function(u) {
-            if(u.created_by == userId) {
-                usersPosts.push(u);
+        docs.forEach(function(p) {
+            if(p.created_by == userId) {
+                usersPosts.push(p);
             }
         });
         res.status(200).json(usersPosts)
