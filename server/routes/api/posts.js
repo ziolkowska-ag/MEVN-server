@@ -34,15 +34,13 @@ posts.get('/:userId', (req, res) => {
     const userId = req.params.userId;
 
     Post.find().exec().then(docs => {
-        // eslint-disable-next-line no-console
-        //const usersPost = [];
+        const usersPosts = [];
         docs.forEach(function(u) {
-            // eslint-disable-next-line no-console
-            console.log(u.created_by);
-            // eslint-disable-next-line no-console
-            console.log(userId);
+            if(u.created_by == userId) {
+                usersPosts.push(u);
+            }
         });
-        res.status(200).json(docs)
+        res.status(200).json(usersPosts)
     }).catch(err => {
         res.status(500).json({
             error: err
