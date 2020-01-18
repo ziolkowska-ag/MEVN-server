@@ -65,4 +65,14 @@ users.post('/login', (req, res) => {
     })
 });
 
+users.get('/:username', (req, res) => {
+    User.findOne({
+        username: req.params.username,
+    }).then(user =>{
+        res.json({id: user._id});
+    }).catch(err => {
+        res.send('error: ' + err);
+    })
+});
+
 module.exports = users;

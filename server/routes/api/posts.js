@@ -30,8 +30,18 @@ const upload = multer({
     fileFilter: fileFilter
 });
 
-posts.get('/', (req, res) => {
+posts.get('/:userId', (req, res) => {
+    const userId = req.params.userId;
+
     Post.find().exec().then(docs => {
+        // eslint-disable-next-line no-console
+        //const usersPost = [];
+        docs.forEach(function(u) {
+            // eslint-disable-next-line no-console
+            console.log(u.created_by);
+            // eslint-disable-next-line no-console
+            console.log(userId);
+        });
         res.status(200).json(docs)
     }).catch(err => {
         res.status(500).json({
@@ -41,7 +51,6 @@ posts.get('/', (req, res) => {
 });
 
 posts.get('/:postId', (req, res) => {
-    const id = req.params.postId;
 
     Post.findById(id).exec().then(doc => {
         if (doc) {
@@ -61,6 +70,7 @@ posts.get('/:postId', (req, res) => {
 posts.post('/', upload.single('postImage'), (req, res) => {
     const post = new Post({
         _id: new mongoose.Types.ObjectId(),
+        created_by: req.body.created_by,
         title: req.body.title,
         text: req.body.text,
         date: Date.now(),
