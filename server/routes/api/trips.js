@@ -22,7 +22,7 @@ trips.get('/:userId', (req, res) => {
 });
 
 
-trips.get('/:tripId', (req, res) => {
+trips.get('/:userId/:tripId', (req, res) => {
     const id = req.params.tripId;
 
     Trip.findById(id).exec().then(doc => {

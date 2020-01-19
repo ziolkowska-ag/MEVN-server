@@ -48,7 +48,8 @@ posts.get('/:userId', (req, res) => {
     });
 });
 
-posts.get('/:postId', (req, res) => {
+posts.get('/:userId/:postId', (req, res) => {
+    const id = req.params.postId;
 
     Post.findById(id).exec().then(doc => {
         if (doc) {
