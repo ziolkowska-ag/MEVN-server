@@ -97,4 +97,21 @@ posts.delete("/:postId", (req, res) => {
     });
 });
 
+posts.patch("/:userId/:postId", (req, res) => {
+    const id = req.params.postId;
+    Post.updateOne({_id: id}, {
+        $set: {
+            created_by: req.body.created_by,
+            title: req.body.title,
+            text: req.body.text,
+            date: new Date(),
+        }
+    }).exec().then(result => {
+        res.status(200).json(result);
+    }).catch(err => {
+        res.status(500).json({
+            error: err
+        });
+    });
+});
 module.exports = posts;
