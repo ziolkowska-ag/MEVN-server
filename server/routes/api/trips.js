@@ -48,7 +48,8 @@ trips.post('/', (req, res) => {
         name: req.body.name,
         country: req.body.country,
         price: req.body.price,
-        date: Date.now(),
+        start_date: req.body.start_date,
+        end_date: req.body.end_date,
     });
 
     trip.save().then(result => {

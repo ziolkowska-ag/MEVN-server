@@ -19,12 +19,13 @@ const TripSchema = mongoose.Schema({
     price: {
         type: String,
     },
-    date: {
+    start_date: {
         type: Date,
         required: true
     },
-    tripPhoto: {
-        type: String
+    end_date: {
+        type: Date,
+        required: true
     }
 });
 
