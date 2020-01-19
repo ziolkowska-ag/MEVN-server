@@ -8,8 +8,8 @@ trips.get('/:userId', (req, res) => {
     const userId = req.params.userId;
     Trip.find().exec().then(docs => {
         const usersTrips = [];
-        docs.forEach(function(t) {
-            if(t.created_by == userId) {
+        docs.forEach(function (t) {
+            if (t.created_by == userId) {
                 usersTrips.push(t);
             }
         });
@@ -73,4 +73,23 @@ trips.delete('/:tripId', (req, res) => {
     });
 });
 
+trips.patch("/:userId/:tripId", (req, res) => {
+    const id = req.params.tripId;
+    Trip.updateOne({_id: id}, {
+        $set: {
+            created_by: req.body.created_by,
+            name: req.body.name,
+            country: req.body.country,
+            price: req.body.price,
+            start_date: req.body.start_date,
+            end_date: req.body.end_date
+        }
+    }).exec().then(result => {
+        res.status(200).json(result);
+    }).catch(err => {
+        res.status(500).json({
+            error: err
+        });
+    });
+});
 module.exports = trips;
