@@ -1,34 +1,8 @@
 const express = require('express');
 const posts = express.Router();
-const multer = require('multer');
 const mongoose = require("mongoose");
 
 const Post = require('../../models/Post');
-
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, 'server/uploads/posts');
-    },
-    filename: function (req, file, cb) {
-        cb(null, new Date().toISOString().replace(":", "_").replace(":", "_") + file.originalname);
-    }
-});
-
-const fileFilter = (req, file, cb) => {
-    if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
-        cb(null, true);
-    } else {
-        cb(null, false);
-    }
-};
-
-const upload = multer({
-    storage: storage,
-    limits: {
-        fieldSize: 1024 * 1024 * 5
-    },
-    fileFilter: fileFilter
-});
 
 posts.get('/:userId', (req, res) => {
     const userId = req.params.userId;
@@ -66,14 +40,13 @@ posts.get('/:userId/:postId', (req, res) => {
     });
 });
 
-posts.post('/', upload.single('postImage'), (req, res) => {
+posts.post('/', (req, res) => {
     const post = new Post({
         _id: new mongoose.Types.ObjectId(),
         created_by: req.body.created_by,
         title: req.body.title,
         text: req.body.text,
         date: Date.now(),
-        postPhoto: req.file ? req.file.path : null
     });
 
     post.save().then(result => {

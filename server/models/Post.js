@@ -21,9 +21,6 @@ const PostSchema = mongoose.Schema({
         type: Date,
         default: Date.now()
     },
-    postPhoto: {
-        type: String,
-    }
 });
 
 module.exports = mongoose.model('post', PostSchema);
